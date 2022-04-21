@@ -11,6 +11,7 @@
     "start": "web-dev-server"
   },
   "dependencies": {
+    "jspdf": "^2.5.1",
     "lit": "^2.0.2"
   },
   "devDependencies": {
