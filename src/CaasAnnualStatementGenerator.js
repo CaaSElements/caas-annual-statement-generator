@@ -74,7 +74,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
     return actualInvestedCapital;
   }
   _parseRepaymentCampaigns(repayments, referenceYearEnd) {
-    console.log(repayments);
     var repaymentCampaigns = [];
     repayments.campaigns.forEach(function (campaign) {
       var dateArray = campaign.creationDateTime.replace(/\D/g, ",").split(","); //for some reason Safari doesnt play nice with european date formats, but splitting the date format up like this will work
@@ -207,7 +206,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   renderPresaleContracts() {
-    console.log(this.contracts);
     const contracts = this._filterContractsByTypeIdsAndReferenceTimes(
       this.contracts,
       this.contractTypeIds.preSale,
@@ -343,9 +341,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
     const investor = this.investor;
     const lastYear = this.lastYear;
     const repayments = this.repayments;
-    console.log(investor);
-    console.log(repayments);
-    console.log(this.contracts);
     if (this.referenceYearEnd && this.referenceYearEnd) {
       return html`<div
           class="pdfDocumentWrapper"
@@ -380,10 +375,13 @@ export class CaasAnnualStatementGenerator extends LitElement {
               01-01-${lastYear}
             </div>
             <div style="width: 25%; text-align: center">
-              ${this._computeActualCurrentlyInvestedCapitalByYearsStart(
-                repayments,
-                lastYear
-              )}"
+              <can-number
+                decimals="2"
+                euros="${this._computeActualCurrentlyInvestedCapitalByYearsStart(
+                  repayments,
+                  lastYear
+                )}"
+              ></can-number>
             </div>
           </div>
 
@@ -450,10 +448,13 @@ export class CaasAnnualStatementGenerator extends LitElement {
                 </div>
 
                 <div style="width: 25%; text-align: center">
-                  ${this._computeActualCurrentlyInvestedCapitalByYearsEnd(
-                    this.repaymentCampaignsPayedOnTime,
-                    this.referenceYearEnd
-                  )}"
+                  <can-number
+                    decimals="2"
+                    euros="${this._computeActualCurrentlyInvestedCapitalByYearsEnd(
+                      this.repaymentCampaignsPayedOnTime,
+                      this.referenceYearEnd
+                    )}"
+                  ></can-number>
                 </div>
               </div>
             </div>
