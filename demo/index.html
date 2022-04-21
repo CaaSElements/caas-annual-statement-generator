@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        background: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="demo"></div>
+
+    <script type="module">
+      // import { html, render } from 'lit';
+      import "../caas-annual-statement-generator.js";
+
+      // const title = 'Hello owc World!';
+      // render(
+      //   html`
+      //     <annual-statement-generator .title=${title}>
+      //       some light-dom
+      //     </annual-statement-generator>
+      //   `,
+      //   document.querySelector('#demo')
+      // );
+    </script>
+    <caas-annual-statement-generator
+      investor='{
+    "id": 8991,
+    "firstName": "test",
+    "lastName": "testers",
+    "username": "test.test@test.nl",
+    "address": {
+        "street": "test street",
+        "houseNumber": 666,
+        "postalCode": "3333 XX",
+        "city": "Utrecht",
+        "region": "Utrecht",
+        "country": "Nederland"
+    },
+    "iban": "NL66TEST6666666666",
+    "bankTenaam": "test testers",
+    "bank": "test",
+    "facebook": "",
+    "twitter": "",
+    "linkedin": "",
+    "totalInvestments": 500,
+    "currentlyInvestedCapital": 0,
+    "maxInvestableAmountInEuros": 100000,
+    "privacy": true,
+    "signUpDateTime": "2014-05-22 23:25:54",
+    "lastEditDateTime": "0000-00-00 00:00:00",
+    "lastExportDateTime": "2014-05-28 13:26:59",
+    "newsletter": false
+}'
+      repayments='{
+    "id": 8991,
+    "totalInvestedCapital": 500,
+    "currentlyInvestedCapital": 0,
+    "campaigns": [
+        {
+            "id": 219,
+            "creationDateTime": "2014-05-22 23:25:54",
+            "payments": [
+                {
+                    "date": "01-08-2015",
+                    "datetime": 1438380000,
+                    "shareRate": 16.666666666666668,
+                    "interestRate": 2.5,
+                    "minumumPayment": "16.333,33",
+                    "minumumInterest": "2.450,00",
+                    "iteration": 0,
+                    "paymentIndex": 1,
+                    "indexNumber": 1,
+                    "numberOfPayments": 6,
+                    "invoiceId": "D0021901",
+                    "campaignId": 219,
+                    "campaignProjectNaam": "TEST",
+                    "completed": true,
+                    "totalPayment": 19.166666666666668,
+                    "remainingDebtPercentage": 83.33333333333333,
+                    "currentPaymentsStatus": {
+                        "paidPayments": 6,
+                        "unpaidPayments": 0,
+                        "currentDebtPercentage": 0,
+                        "totalLoanPrinciple": 122000
+                    },
+                    "totalAmountThisPayment": 23383.333333333336,
+                    "debtBeforeThisPayment": 140300,
+                    "totalDebt": 140300,
+                    "shareAmount": 83.33333333333334,
+                    "interestAmount": 12.5,
+                    "totalAmount": 95.83333333333334,
+                    "totalInvestmentAmount": 500
+                },
+                {
+                    "date": "01-02-2016",
+                    "datetime": 1454281200,
+                    "shareRate": 16.666666666666668,
+                    "interestRate": 2.5,
+                    "minumumPayment": "16.333,33",
+                    "minumumInterest": "2.450,00",
+                    "iteration": 1,
+                    "paymentIndex": 2,
+                    "indexNumber": 2,
+                    "numberOfPayments": 6,
+                    "invoiceId": "D0021902",
+                    "campaignId": 219,
+                    "campaignProjectNaam": "TEST",
+                    "completed": true,
+                    "totalPayment": 19.166666666666668,
+                    "remainingDebtPercentage": 66.66666666666666,
+                    "currentPaymentsStatus": {
+                        "paidPayments": 6,
+                        "unpaidPayments": 0,
+                        "currentDebtPercentage": 0,
+                        "totalLoanPrinciple": 122000
+                    },
+                    "totalAmountThisPayment": 23383.333333333336,
+                    "debtBeforeThisPayment": 116916,
+                    "totalDebt": 140300,
+                    "shareAmount": 83.33333333333334,
+                    "interestAmount": 12.5,
+                    "totalAmount": 95.83333333333334,
+                    "totalInvestmentAmount": 500
+                },
+                {
+                    "date": "01-08-2016",
+                    "datetime": 1470002400,
+                    "shareRate": 16.666666666666668,
+                    "interestRate": 2.5,
+                    "minumumPayment": "16.333,33",
+                    "minumumInterest": "2.450,00",
+                    "iteration": 2,
+                    "paymentIndex": 3,
+                    "indexNumber": 3,
+                    "numberOfPayments": 6,
+                    "invoiceId": "D0021903",
+                    "campaignId": 219,
+                    "campaignProjectNaam": "TEST",
+                    "completed": true,
+                    "totalPayment": 19.166666666666668,
+                    "remainingDebtPercentage": 49.999999999999986,
+                    "currentPaymentsStatus": {
+                        "paidPayments": 6,
+                        "unpaidPayments": 0,
+                        "currentDebtPercentage": 0,
+                        "totalLoanPrinciple": 122000
+                    },
+                    "totalAmountThisPayment": 23383.333333333336,
+                    "debtBeforeThisPayment": 93533,
+                    "totalDebt": 140300,
+                    "shareAmount": 83.33333333333334,
+                    "interestAmount": 12.5,
+                    "totalAmount": 95.83333333333334,
+                    "totalInvestmentAmount": 500
+                },
+                {
+                    "date": "01-02-2017",
+                    "datetime": 1485903600,
+                    "shareRate": 16.666666666666668,
+                    "interestRate": 2.5,
+                    "minumumPayment": "16.333,33",
+                    "minumumInterest": "2.450,00",
+                    "iteration": 3,
+                    "paymentIndex": 4,
+                    "indexNumber": 4,
+                    "numberOfPayments": 6,
+                    "invoiceId": "D0021904",
+                    "campaignId": 219,
+                    "campaignProjectNaam": "TEST",
+                    "completed": true,
+                    "totalPayment": 19.166666666666668,
+                    "remainingDebtPercentage": 33.333333333333314,
+                    "currentPaymentsStatus": {
+                        "paidPayments": 6,
+                        "unpaidPayments": 0,
+                        "currentDebtPercentage": 0,
+                        "totalLoanPrinciple": 122000
+                    },
+                    "totalAmountThisPayment": 23383.333333333336,
+                    "debtBeforeThisPayment": 70150,
+                    "totalDebt": 140300,
+                    "shareAmount": 83.33333333333334,
+                    "interestAmount": 12.5,
+                    "totalAmount": 95.83333333333334,
+                    "totalInvestmentAmount": 500
+                },
+                {
+                    "date": "01-08-2017",
+                    "datetime": 1501538400,
+                    "shareRate": 16.666666666666668,
+                    "interestRate": 2.5,
+                    "minumumPayment": "16.333,33",
+                    "minumumInterest": "2.450,00",
+                    "iteration": 4,
+                    "paymentIndex": 5,
+                    "indexNumber": 5,
+                    "numberOfPayments": 6,
+                    "invoiceId": "D0021905",
+                    "campaignId": 219,
+                    "campaignProjectNaam": "TEST",
+                    "completed": true,
+                    "totalPayment": 19.166666666666668,
+                    "remainingDebtPercentage": 16.666666666666647,
+                    "currentPaymentsStatus": {
+                        "paidPayments": 6,
+                        "unpaidPayments": 0,
+                        "currentDebtPercentage": 0,
+                        "totalLoanPrinciple": 122000
+                    },
+                    "totalAmountThisPayment": 23383.333333333336,
+                    "debtBeforeThisPayment": 46766,
+                    "totalDebt": 140300,
+                    "shareAmount": 83.33333333333334,
+                    "interestAmount": 12.5,
+                    "totalAmount": 95.83333333333334,
+                    "totalInvestmentAmount": 500
+                },
+                {
+                    "date": "01-02-2018",
+                    "datetime": 1517439600,
+                    "shareRate": 16.666666666666668,
+                    "interestRate": 2.5,
+                    "minumumPayment": "16.333,33",
+                    "minumumInterest": "2.450,00",
+                    "iteration": 5,
+                    "paymentIndex": 6,
+                    "indexNumber": 6,
+                    "numberOfPayments": 6,
+                    "invoiceId": "D0021906",
+                    "campaignId": 219,
+                    "campaignProjectNaam": "TEST",
+                    "completed": true,
+                    "totalPayment": 19.166666666666668,
+                    "remainingDebtPercentage": 0,
+                    "currentPaymentsStatus": {
+                        "paidPayments": 6,
+                        "unpaidPayments": 0,
+                        "currentDebtPercentage": 0,
+                        "totalLoanPrinciple": 122000
+                    },
+                    "totalAmountThisPayment": 23383.333333333336,
+                    "debtBeforeThisPayment": 23383,
+                    "totalDebt": 140300,
+                    "shareAmount": 83.33333333333334,
+                    "interestAmount": 12.5,
+                    "totalAmount": 95.83333333333334,
+                    "totalInvestmentAmount": 500
+                }
+            ]
+        }
+    ]
+}'
+      contracts='[
+    {
+        "id": 12202,
+        "status": 2,
+        "statusName": "success",
+        "contractType": 4,
+        "projectNaam": "test",
+        "startDate": "2014-05-16",
+        "deadlineDate": "2014-08-01",
+        "firstPaymentDate": "2015-08-01",
+        "finalPaymentDate": "2018-02-01",
+        "creationDateTime": "2014-05-22 23:25:54",
+        "annuity": 6,
+        "returnOnInvestmentPercentage": 15,
+        "privacy": true,
+        "investment": 500,
+        "pdfSlug": "2125343129537e6aa5750d6",
+        "investorId": 8991,
+        "motivationalMessage": "testtttttt",
+        "relationToEntrepeneur": "belegger",
+        "ongoingInvestment": false,
+        "firstName": "TEST",
+        "lastName": "TESTER",
+        "emailAddress": "test.test@test.nl",
+        "incentive": "nee",
+        "lastUpdate": "2014-05-22 23:25:54",
+        "lastExport": "2014-08-14 16:14:17"
+    }
+]'
+    >
+    </caas-annual-statement-generator>
+  </body>
+</html>
