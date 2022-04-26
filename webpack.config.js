@@ -1,10 +1,24 @@
 const path = require("path");
-console.log(path);
+
+const dir = path.resolve(__dirname, "dist");
+
+const pubPath = dir.split("/").reduce((acc, folder) => {
+  if (acc === "" && folder !== "node_modules") {
+    return acc;
+  }
+
+  if (acc === "") {
+    acc = "/";
+  }
+  acc += `${folder}/`;
+  return acc;
+}, "");
+
 module.exports = {
   entry: "./src/index.js",
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: "/dist/",
+    publicPath: pubPath || "/dist/",
   },
 };
