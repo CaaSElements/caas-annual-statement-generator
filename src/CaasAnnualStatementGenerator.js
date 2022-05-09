@@ -98,14 +98,14 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   _checkIfCampaignPaymentsAreMadeOnTime(campaignPayments) {
-    var _self = this;
+    var nowTimeStamp = new Date().getTime() / 1000;
     var onTime = true;
-    var endDateUnix2020 = 1609455599;
+    var endDate = new Date(`01-01-${this.lastYear}`).getTime() / 1000;
     campaignPayments.forEach(function (payment) {
-      if (payment.datetime > endDateUnix2020) {
+      if (payment.datetime > endDate) {
         return onTime;
       }
-      if (payment.datetime < _self.nowTimeStamp && !payment.completed)
+      if (payment.datetime < nowTimeStamp && !payment.completed)
         return (onTime = false);
     });
     return onTime;
@@ -114,13 +114,16 @@ export class CaasAnnualStatementGenerator extends LitElement {
     repayments,
     referenceTime
   ) {
+    var referenceTimeStamp =
+      new Date(`01-01-${referenceTime}`).getTime() / 1000;
     var campaigns = [];
     repayments.campaigns.forEach(function (campaign) {
       var dateArray = campaign.creationDateTime.replace(/\D/g, ",").split(","); //for some reason Safari doesnt play nice with european date formats, but splitting the date format up like this will work
 
       var creationDateTime = new Date(...dateArray).getTime() / 1000;
-      if (creationDateTime < referenceTime)
-        return campaigns.push(campaign.payments);
+      if (creationDateTime < referenceTimeStamp)
+        campaigns.push(campaign.payments);
+      return;
     });
 
     var actualInvestedCapital = 0;
@@ -129,7 +132,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
       actualInvestedCapital += campaignPayments[0].totalInvestmentAmount; //add principle
       for (var i = 0; i < campaignPayments.length; i++) {
         var payment = campaignPayments[i];
-        if (payment.datetime < referenceTime)
+        if (payment.datetime < referenceTimeStamp)
           actualInvestedCapital -= payment.shareAmount; //subtract from principle
       }
     });
@@ -322,7 +325,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   formatNumber(number, decimals = 2) {
-    debugger;
     if (typeof number !== "number")
       console.error(
         number,
