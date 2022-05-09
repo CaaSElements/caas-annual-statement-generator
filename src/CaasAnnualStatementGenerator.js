@@ -27,6 +27,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
       repaymentCampaigns: { type: Array },
       repaymentCampaignsPayedOnTime: { type: Array },
       contractTypeIds: { type: Object },
+      filename: { type: String },
     };
   }
 
@@ -38,6 +39,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
       loan: [3, 4, 7, 8],
       stocks: [5, 6],
     };
+    this.filename = "contract";
   }
 
   firstUpdated() {
