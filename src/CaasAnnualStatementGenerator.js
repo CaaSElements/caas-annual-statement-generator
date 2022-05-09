@@ -340,17 +340,28 @@ export class CaasAnnualStatementGenerator extends LitElement {
     const clone = document.createElement("div");
     clone.innerHTML = HTML.innerHTML;
     clone.style = "width: 600px; padding:0 25px; font-size: 10px;";
-    const filename = "123 test";
+    const filename = this.filename;
     const pdf = new jsPDF({ unit: "px", format: "a4" });
+    const self = this;
     await pdf.html(clone, {
       callback: function (pdf) {
+        self.addFooter(pdf, pdf.internal.getNumberOfPages());
         pdf.save(filename);
       },
       html2canvas: { logging: false, scale: 0.65 },
-      margin: [10, 10, 60, 10],
+      margin: [10, 10, 40, 10],
     });
-    console.log(thing);
-    HTML.style = thing;
+  }
+
+  addFooter(pdf, totalPages) {
+    console.log(totalPages);
+    for (var i = totalPages; i >= 1; i--) {
+      pdf.setPage(i);
+
+      var str = "Pagina " + i + " van " + totalPages;
+      pdf.setFontSize(10);
+      pdf.text(str, 25, pdf.internal.pageSize.height - 20);
+    }
   }
 
   render() {
