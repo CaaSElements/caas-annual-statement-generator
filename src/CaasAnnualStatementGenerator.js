@@ -325,16 +325,22 @@ export class CaasAnnualStatementGenerator extends LitElement {
     );
   }
 
-  createPDF() {
+  async createPDF() {
     const HTML = this.shadowRoot.querySelector(".pdfDocumentWrapper");
-    HTML.style.width = "600px";
+    const clone = document.createElement("div");
+    clone.innerHTML = HTML.innerHTML;
+    clone.style = "width: 600px; padding:0 25px; font-size: 10px;";
     const filename = "123 test";
-    const pdf = new jsPDF("p", "pt", "a4");
-    pdf.html(HTML, {
+    const pdf = new jsPDF({ unit: "px", format: "a4" });
+    await pdf.html(clone, {
       callback: function (pdf) {
         pdf.save(filename);
       },
+      html2canvas: { logging: false, scale: 0.65 },
+      margin: [10, 10, 60, 10],
     });
+    console.log(thing);
+    HTML.style = thing;
   }
 
   render() {
@@ -371,10 +377,12 @@ export class CaasAnnualStatementGenerator extends LitElement {
                 Nominale waarde beleggingen op:
               </h4>
             </div>
-            <div style="width: 25%; text-align: center; font-size: 10px">
+            <div
+              style="width: 25%; text-align: center; font-size: 10px; align-self:center"
+            >
               01-01-${lastYear}
             </div>
-            <div style="width: 25%; text-align: center">
+            <div style="width: 25%; text-align: center;  align-self:center">
               <can-number
                 decimals="2"
                 euros="${this._computeActualCurrentlyInvestedCapitalByYearsStart(
@@ -443,11 +451,11 @@ export class CaasAnnualStatementGenerator extends LitElement {
                   </h3>
                 </div>
 
-                <div style="width: 25%; text-align: center">
+                <div style="width: 25%; text-align: center; align-self:center">
                   31-12-${lastYear}
                 </div>
 
-                <div style="width: 25%; text-align: center">
+                <div style="width: 25%; text-align: center;  align-self:center">
                   <can-number
                     decimals="2"
                     euros="${this._computeActualCurrentlyInvestedCapitalByYearsEnd(
