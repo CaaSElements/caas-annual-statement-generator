@@ -262,10 +262,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
           <div style="width: 25%; text-align: center">${payment.date}</div>
 
           <div style="width: 25%; text-align: center">
-            <can-number
-              decimals="2"
-              euros="${payment.shareAmount}"
-            ></can-number>
+            € ${this.formatNumber(payment.shareAmount)}
           </div>
         </div>
       `
@@ -315,14 +312,23 @@ export class CaasAnnualStatementGenerator extends LitElement {
           <div style="width: 25%; text-align: center">${payment.date}</div>
 
           <div style="width: 25%; text-align: center">
-            <can-number
-              decimals="2"
-              euros="${payment.interestAmount}"
-            ></can-number>
+            € ${this.formatNumber(payment.interestAmount)}
           </div>
         </div>
       `
     );
+  }
+
+  formatNumber(number, decimals = 2) {
+    debugger;
+    if (typeof number !== "number")
+      console.error(
+        number,
+        "is not a number. can-number should be fed numbers, else it starts behaving erratically."
+      );
+    number = +number.toFixed(decimals);
+    number = number.toLocaleString("nl-NL");
+    return number;
   }
 
   async createPDF() {
@@ -383,13 +389,13 @@ export class CaasAnnualStatementGenerator extends LitElement {
               01-01-${lastYear}
             </div>
             <div style="width: 25%; text-align: center;  align-self:center">
-              <can-number
-                decimals="2"
-                euros="${this._computeActualCurrentlyInvestedCapitalByYearsStart(
+              €
+              ${this.formatNumber(
+                this._computeActualCurrentlyInvestedCapitalByYearsStart(
                   repayments,
                   lastYear
-                )}"
-              ></can-number>
+                )
+              )}
             </div>
           </div>
 
@@ -456,13 +462,13 @@ export class CaasAnnualStatementGenerator extends LitElement {
                 </div>
 
                 <div style="width: 25%; text-align: center;  align-self:center">
-                  <can-number
-                    decimals="2"
-                    euros="${this._computeActualCurrentlyInvestedCapitalByYearsEnd(
+                  €
+                  ${this.formatNumber(
+                    this._computeActualCurrentlyInvestedCapitalByYearsEnd(
                       this.repaymentCampaignsPayedOnTime,
                       this.referenceYearEnd
-                    )}"
-                  ></can-number>
+                    )
+                  )}
                 </div>
               </div>
             </div>
