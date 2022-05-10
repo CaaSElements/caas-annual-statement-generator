@@ -177,12 +177,13 @@ export class CaasAnnualStatementGenerator extends LitElement {
     return filteredContracts;
   }
 
-  renderLoanRepayments() {
+  renderLoanContracts() {
+    console.log("inleg lening");
     const contracts = this._filterContractsByTypeIdsAndReferenceTimes(
       this.contracts,
       this.contractTypeIds.loan,
-      referenceYearStart,
-      referenceYearEnd
+      this.referenceYearStart,
+      this.referenceYearEnd
     );
 
     return contracts.map(
@@ -244,6 +245,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   renderLoanRepayments() {
+    console.log("now calculating rent");
     const payments = this._filterRepaymentsByYear(
       this.repaymentCampaignsPayedOnTime,
       this.referenceYearStart,
@@ -254,13 +256,13 @@ export class CaasAnnualStatementGenerator extends LitElement {
       (payment) => html`
         <div
           style="
-	                                    width: 100%;
-	                                    display: flex;
-	                                    border-bottom: 0.5px solid
-	                                        rgba(0, 0, 0, 0.16);
-	                                    line-height: 30px;
-	                                    font-size: 10px;
-	                                "
+  	                                    width: 100%;
+  	                                    display: flex;
+  	                                    border-bottom: 0.5px solid
+  	                                        rgba(0, 0, 0, 0.16);
+  	                                    line-height: 30px;
+  	                                    font-size: 10px;
+  	                                "
         >
           <div style="width: 50%">${payment.campaignProjectNaam}</div>
 
@@ -272,25 +274,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
         </div>
       `
     );
-  }
-
-  _filterRepaymentsByYear(
-    repaymentCampaigns,
-    referenceYearStart,
-    referenceYearEnd
-  ) {
-    var consolidatedPayments = [];
-    repaymentCampaigns.forEach(function (campaign) {
-      for (var i = 0; i < campaign.length; i++) {
-        if (
-          campaign[i].datetime > referenceYearStart &&
-          campaign[i].datetime < referenceYearEnd
-        ) {
-          consolidatedPayments.push(campaign[i]);
-        }
-      }
-    });
-    return consolidatedPayments;
   }
 
   renderInterestRepayments() {
@@ -425,7 +408,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
                 </h4>
               </div>
             </div>
-            ${this.renderLoanRepayments()}
+            ${this.renderLoanContracts()}
 
             <div class="presale" style="font-size: 10px">
               <div style="width: 100%">
