@@ -33,7 +33,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
 
   constructor() {
     super();
-    this.lastYear = new Date().getFullYear() - 1;
     this.contractTypeIds = {
       preSale: [1, 2],
       loan: [3, 4, 7, 8],
@@ -54,14 +53,20 @@ export class CaasAnnualStatementGenerator extends LitElement {
       this._parseRepaymentCampaignsPayedOnTime(this.repaymentCampaigns);
   }
 
-  __increment() {
-    this.counter += 1;
+  updated(changedProps) {
+    if (changedProps.has("lastYear")) {
+      this.referenceYearStart = new Date(this.lastYear, 0).getTime() / 1000;
+      this.referenceYearEnd = new Date(this.lastYear, 12).getTime() / 1000;
+      this.repaymentCampaigns = this._parseRepaymentCampaigns(
+        this.repayments,
+        this.referenceYearEnd
+      );
+
+      this.repaymentCampaignsPayedOnTime =
+        this._parseRepaymentCampaignsPayedOnTime(this.repaymentCampaigns);
+    }
   }
-  _getLastYear() {
-    var currentYear = new Date().getFullYear();
-    var lastYear = currentYear - 1;
-    return lastYear;
-  }
+
   _computeActualCurrentlyInvestedCapitalByYearsEnd(campaigns, referenceTime) {
     var actualInvestedCapital = 0;
     campaigns.forEach(function (campaignPayments) {
@@ -123,7 +128,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
       var creationDateTime = new Date(...dateArray).getTime() / 1000;
       if (creationDateTime < referenceTimeStamp)
         campaigns.push(campaign.payments);
-      return;
     });
 
     var actualInvestedCapital = 0;
