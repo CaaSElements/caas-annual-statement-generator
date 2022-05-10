@@ -93,19 +93,26 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   _parseRepaymentCampaignsPayedOnTime(repaymentCampaigns) {
+    let filteredCampaignIndexes = [];
     for (var i = 0; i < repaymentCampaigns.length; i++) {
       var campaignPaymentsOnTime = this._checkIfCampaignPaymentsAreMadeOnTime(
         repaymentCampaigns[i]
       ); // check for late payments according to current date
-      if (!campaignPaymentsOnTime) repaymentCampaigns.splice(i, 1);
+      if (!campaignPaymentsOnTime) filteredCampaignIndexes.push(i);
     }
+
+    for (let y = 0; y < filteredCampaignIndexes.length; y++) {
+      repaymentCampaigns.splice(filteredCampaignIndexes[y] - y, 1);
+    }
+
     return repaymentCampaigns;
   }
 
   _checkIfCampaignPaymentsAreMadeOnTime(campaignPayments) {
     var nowTimeStamp = new Date().getTime() / 1000;
     var onTime = true;
-    var endDate = new Date(`01-01-${this.lastYear}`).getTime() / 1000;
+    var endDate = new Date(this.referenceYearEnd).getTime / 1000;
+
     campaignPayments.forEach(function (payment) {
       if (payment.datetime > endDate) {
         return onTime;
@@ -182,7 +189,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   renderLoanContracts() {
-    console.log("inleg lening");
     const contracts = this._filterContractsByTypeIdsAndReferenceTimes(
       this.contracts,
       this.contractTypeIds.loan,
@@ -249,7 +255,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   renderLoanRepayments() {
-    console.log("now calculating rent");
     const payments = this._filterRepaymentsByYear(
       this.repaymentCampaignsPayedOnTime,
       this.referenceYearStart,
@@ -341,7 +346,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
   }
 
   addFooter(pdf, totalPages) {
-    console.log(totalPages);
     for (var i = totalPages; i >= 1; i--) {
       pdf.setPage(i);
 
