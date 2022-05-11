@@ -204,6 +204,8 @@ export class CaasAnnualStatementGenerator extends LitElement {
 	                                    border-bottom: 0.5px solid
 	                                        rgba(0, 0, 0, 0.16);
 	                                    line-height: 30px;
+										font-size: 10px;
+
 	                                "
       >
         <div style="width: 50%">${contract.projectNaam}</div>
@@ -216,7 +218,9 @@ export class CaasAnnualStatementGenerator extends LitElement {
           ></can-date>
         </div>
 
-        <div style="width: 25%; text-align: center">${contract.investment}</div>
+        <div style="width: 25%; text-align: center">
+          € ${contract.investment}
+        </div>
       </div>`
     );
   }
