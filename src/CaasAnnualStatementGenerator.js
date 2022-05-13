@@ -512,7 +512,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
           </div>
         </div>
 
-        <can-button on-tap="createPdf">Download PDF</can-button> `;
+        <can-button @click=${this.createPDF}>Download PDF</can-button> `;
     }
   }
 }
