@@ -365,154 +365,150 @@ export class CaasAnnualStatementGenerator extends LitElement {
     const repayments = this.repayments;
     if (this.referenceYearEnd && this.referenceYearEnd) {
       return html`<div
-          class="pdfDocumentWrapper"
-          style="
+        class="pdfDocumentWrapper"
+        style="
 	                    padding: 25px 25px 30px;
 	                    max-width: 600px;
 	                    margin: 0 auto;
 	                    background-color: #fff;
 	                "
-        >
-          <img src="/apple-touch-icon-76x76.png" alt="logo" />
-          <br />
-          <br />
-          <h4 style="font-size: 12px">${investor.bankTenaam}</h4>
-          <div>
-            <p style="font-size: 10px; line-height: 16px">
-              ${investor.address.street} ${investor.address.houseNumber}<br />
-              ${investor.address.postalCode}
-              <br />
-              ${investor.address.city}
-            </p>
+      >
+        <img src="/apple-touch-icon-76x76.png" alt="logo" />
+        <br />
+        <br />
+        <h4 style="font-size: 12px">${investor.bankTenaam}</h4>
+        <div>
+          <p style="font-size: 10px; line-height: 16px">
+            ${investor.address.street} ${investor.address.houseNumber}<br />
+            ${investor.address.postalCode}
+            <br />
+            ${investor.address.city}
+          </p>
+        </div>
+        <h3 style="font-size: 16px">${lastYear}</h3>
+        <br />
+        <div class="tableHeader" style="display: flex">
+          <div style="width: 50%">
+            <h4 style="font-size: 12px; font-weight: 500">
+              Nominale waarde beleggingen op:
+            </h4>
           </div>
-          <h3 style="font-size: 16px">${lastYear}</h3>
-          <br />
-          <div class="tableHeader" style="display: flex">
-            <div style="width: 50%">
-              <h4 style="font-size: 12px; font-weight: 500">
-                Nominale waarde beleggingen op:
+          <div
+            style="width: 25%; text-align: center; font-size: 10px; align-self:center"
+          >
+            01-01-${lastYear}
+          </div>
+          <div style="width: 25%; text-align: center;  align-self:center">
+            €
+            ${this.formatNumber(
+              this._computeActualCurrentlyInvestedCapitalByYearsStart(
+                repayments,
+                lastYear
+              )
+            )}
+          </div>
+        </div>
+
+        <div
+          class="tableBodyHolder"
+          style="display: flex; flex-direction: column"
+        >
+          <div class="tableBodyLoan" style="font-size: 10px">
+            <div style="width: 100%">
+              <h4 style="font-size: 12px">
+                <i>Inleg leningen</i>
               </h4>
             </div>
-            <div
-              style="width: 25%; text-align: center; font-size: 10px; align-self:center"
-            >
-              01-01-${lastYear}
+          </div>
+          ${this.renderLoanContracts()}
+
+          <div class="presale" style="font-size: 10px">
+            <div style="width: 100%">
+              <h4 style="font-size: 12px">
+                <i>Inleg voorverkoop</i>
+              </h4>
             </div>
-            <div style="width: 25%; text-align: center;  align-self:center">
-              €
-              ${this.formatNumber(
-                this._computeActualCurrentlyInvestedCapitalByYearsStart(
-                  repayments,
-                  lastYear
-                )
-              )}
+          </div>
+          ${this.renderPresaleContracts()}
+
+          <div class="repayments">
+            <div style="width: 100%">
+              <h4 style="font-size: 12px">
+                <i>Aflossingen leningen</i>
+              </h4>
             </div>
           </div>
 
-          <div
-            class="tableBodyHolder"
-            style="display: flex; flex-direction: column"
-          >
-            <div class="tableBodyLoan" style="font-size: 10px">
-              <div style="width: 100%">
-                <h4 style="font-size: 12px">
-                  <i>Inleg leningen</i>
-                </h4>
-              </div>
-            </div>
-            ${this.renderLoanContracts()}
-
-            <div class="presale" style="font-size: 10px">
-              <div style="width: 100%">
-                <h4 style="font-size: 12px">
-                  <i>Inleg voorverkoop</i>
-                </h4>
-              </div>
-            </div>
-            ${this.renderPresaleContracts()}
-
-            <div class="repayments">
-              <div style="width: 100%">
-                <h4 style="font-size: 12px">
-                  <i>Aflossingen leningen</i>
-                </h4>
-              </div>
+          ${this.renderLoanRepayments()}
+          <br />
+          <div class="interestRepayments">
+            <div style="width: 100%">
+              <h4 style="font-size: 12px">
+                <i>Aflossingen rente</i>
+              </h4>
             </div>
 
-            ${this.renderLoanRepayments()}
-            <br />
-            <div class="interestRepayments">
-              <div style="width: 100%">
-                <h4 style="font-size: 12px">
-                  <i>Aflossingen rente</i>
-                </h4>
-              </div>
-
-              ${this.renderInterestRepayments()}
-            </div>
-            <br />
-            <div class="sumAmount">
-              <div
-                style="
+            ${this.renderInterestRepayments()}
+          </div>
+          <br />
+          <div class="sumAmount">
+            <div
+              style="
 	                                width: 100%;
 	                                display: flex;
 	                                border-bottom: 0.5px solid rgba(0, 0, 0, 0.16);
 	                                line-height: 30px;
 	                                font-size: 10px;
 	                            "
-              >
-                <div style="width: 50%">
-                  <h3 style="font-size: 12px">
-                    Nominale waarde beleggingen op
-                  </h3>
-                </div>
+            >
+              <div style="width: 50%">
+                <h3 style="font-size: 12px">Nominale waarde beleggingen op</h3>
+              </div>
 
-                <div style="width: 25%; text-align: center; align-self:center">
-                  31-12-${lastYear}
-                </div>
+              <div style="width: 25%; text-align: center; align-self:center">
+                31-12-${lastYear}
+              </div>
 
-                <div style="width: 25%; text-align: center;  align-self:center">
-                  €
-                  ${this.formatNumber(
-                    this._computeActualCurrentlyInvestedCapitalByYearsEnd(
-                      this.repaymentCampaignsPayedOnTime,
-                      this.referenceYearEnd
-                    )
-                  )}
-                </div>
+              <div style="width: 25%; text-align: center;  align-self:center">
+                €
+                ${this.formatNumber(
+                  this._computeActualCurrentlyInvestedCapitalByYearsEnd(
+                    this.repaymentCampaignsPayedOnTime,
+                    this.referenceYearEnd
+                  )
+                )}
               </div>
             </div>
-            <br />
-            <br />
-            <div
-              class="footer"
-              style="
+          </div>
+          <br />
+          <br />
+          <div
+            class="footer"
+            style="
 	                            display: flex;
 	                            justify-content: space-between;
 	                            font-size: 10px;
 	                            line-height: 14px;
 	                        "
-            >
-              <div>
-                <div>Herenstraat 35</div>
-                <div>3512KB Utrecht</div>
-                <div>06-49099097</div>
-                <div>info@crowdaboutnow.nl</div>
-                <div>crowdaboutnow.nl</div>
-              </div>
+          >
+            <div>
+              <div>Herenstraat 35</div>
+              <div>3512KB Utrecht</div>
+              <div>06-49099097</div>
+              <div>info@crowdaboutnow.nl</div>
+              <div>crowdaboutnow.nl</div>
+            </div>
 
-              <div>
-                <div>BIC RABONL2U</div>
-                <div>IBAN NL09RABO0351492100</div>
-                <div>KVK 30286818</div>
-                <div>BTW NL822343095 B01</div>
-                <div>crowdaboutnow.nl</div>
-              </div>
+            <div>
+              <div>BIC RABONL2U</div>
+              <div>IBAN NL09RABO0351492100</div>
+              <div>KVK 30286818</div>
+              <div>BTW NL822343095 B01</div>
+              <div>crowdaboutnow.nl</div>
             </div>
           </div>
         </div>
-
-        <can-button @click=${this.createPDF}>Download PDF</can-button> `;
+      </div>`;
     }
   }
 }

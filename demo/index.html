@@ -8,12 +8,13 @@
       }
     </style>
   </head>
+
   <body>
     <div id="demo"></div>
 
     <script type="module">
       // import { html, render } from 'lit';
-      import "../dist/main.js";
+      import "../src/index.js";
 
       // const title = 'Hello owc World!';
       // render(
@@ -24,8 +25,16 @@
       //   `,
       //   document.querySelector('#demo')
       // );
+
+      const caasElement = document.getElementsByTagName(
+        "caas-annual-statement-generator"
+      )[0];
+      document
+        .getElementById("button")
+        .addEventListener("click", caasElement.createPDF.bind(caasElement));
     </script>
     <caas-annual-statement-generator
+      lastyear="2019"
       investor='{
     "id": 8991,
     "firstName": "test",
