@@ -9,7 +9,7 @@
 	"scripts": {
 		"analyze": "cem analyze --litelement",
 		"start": "web-dev-server",
-		"postinstall": "yarn webpack"
+		"postinstall": "webpack"
 	},
 	"dependencies": {
 		"jspdf": "^2.5.1",
