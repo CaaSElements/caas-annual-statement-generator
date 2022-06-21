@@ -331,7 +331,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
     return number;
   }
 
-  async createPDF() {
+  createPDF() {
     const HTML = this.shadowRoot.querySelector(".pdfDocumentWrapper");
     const clone = document.createElement("div");
     clone.innerHTML = HTML.innerHTML;
@@ -339,14 +339,27 @@ export class CaasAnnualStatementGenerator extends LitElement {
     const filename = this.filename;
     const pdf = new jsPDF({ unit: "px", format: "a4" });
     const self = this;
-    await pdf.html(clone, {
-      callback: function (pdf) {
-        self.addFooter(pdf, pdf.internal.getNumberOfPages());
-        pdf.save(filename);
-      },
-      html2canvas: { logging: false, scale: 0.65 },
-      margin: [10, 10, 40, 10],
-    });
+    pdf
+      .html(clone, {
+        callback: function (pdf) {
+          self.addFooter(pdf, pdf.internal.getNumberOfPages());
+          pdf.save(filename);
+        },
+        html2canvas: { logging: false, scale: 0.65 },
+        margin: [10, 10, 40, 10],
+      })
+      .then((result) => {
+        console.log(result);
+        const event = new CustomEvent("pdf-render-complete", {
+          detail: {
+            value: true,
+          },
+          bubbles: true,
+          composed: true,
+        });
+
+        this.dispatchEvent(event);
+      });
   }
 
   addFooter(pdf, totalPages) {
