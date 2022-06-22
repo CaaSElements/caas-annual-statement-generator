@@ -7,10 +7,9 @@ const pubPath = dir.split("/").reduce((acc, folder) => {
     return acc;
   }
 
-  if (acc === "" || folder === "@bower_components") {
+  if (acc === "" || folder === "bower_components") {
     acc = "/";
   }
-
 
   acc += `${folder}/`;
   return acc;
