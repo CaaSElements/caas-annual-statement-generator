@@ -12,7 +12,7 @@ const pubPath = dir.split("/").reduce((acc, folder) => {
   }
 
   if (folder === "@bower_components") {
-    acc = "/bower_components";
+    acc = "/bower_components/";
   }
 
   acc += `${folder}/`;
