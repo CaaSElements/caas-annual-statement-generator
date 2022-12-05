@@ -38,7 +38,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
       loan: [3, 4, 7, 8],
       stocks: [5, 6],
     };
-    this.filename = "contract";
+    this.filename = "jaaropgave";
   }
 
   firstUpdated() {
@@ -336,7 +336,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
     const clone = document.createElement("div");
     clone.innerHTML = HTML.innerHTML;
     clone.style = "width: 600px; padding:0 25px; font-size: 10px;";
-    const filename = this.filename;
+    const filename = this.filename + `${this.lastYear}`;
     const pdf = new jsPDF({ unit: "px", format: "a4" });
     const self = this;
     pdf
