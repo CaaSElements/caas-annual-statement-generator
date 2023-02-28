@@ -111,7 +111,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
   _checkIfCampaignPaymentsAreMadeOnTime(campaignPayments) {
     var nowTimeStamp = new Date().getTime() / 1000;
     var onTime = true;
-    var endDate = new Date(this.referenceYearEnd).getTime / 1000;
+    var endDate = new Date(this.referenceYearEnd).getTime() / 1000;
 
     campaignPayments.forEach(function (payment) {
       if (payment.datetime > endDate) {
