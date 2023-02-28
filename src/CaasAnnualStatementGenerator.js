@@ -403,7 +403,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
         <div class="tableHeader" style="display: flex">
           <div style="width: 50%">
             <h4 style="font-size: 12px; font-weight: 500">
-              Nominale waarde beleggingen op:
+              Waarde beleggingen op:
             </h4>
           </div>
           <div
@@ -475,7 +475,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
 	                            "
             >
               <div style="width: 50%">
-                <h3 style="font-size: 12px">Nominale waarde beleggingen op</h3>
+                <h3 style="font-size: 12px">Waarde beleggingen op</h3>
               </div>
 
               <div style="width: 25%; text-align: center; align-self:center">
