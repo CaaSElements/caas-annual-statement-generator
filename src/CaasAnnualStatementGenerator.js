@@ -2,6 +2,7 @@ import { html, css, LitElement } from 'lit';
 import { jsPDF } from 'jspdf';
 
 export class CaasAnnualStatementGenerator extends LitElement {
+
 	static get styles() {
 		return css`
 			:host {
