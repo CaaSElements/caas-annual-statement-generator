@@ -28,6 +28,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
 			repaymentCampaignsPayedOnTime: { type: Array, value: [] },
 			contractTypeIds: { type: Object },
 			filename: { type: String },
+			hasFreedomInvestments: Boolean,
 		};
 	}
 
