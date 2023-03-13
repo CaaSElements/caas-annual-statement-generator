@@ -45,21 +45,108 @@ export class CaasAnnualStatementGenerator extends LitElement {
 	firstUpdated() {
 		this.referenceYearStart = new Date(this.lastYear, 0).getTime() / 1000;
 		this.referenceYearEnd = new Date(this.lastYear, 12).getTime() / 1000;
-		// this.repaymentCampaigns = this._parseRepaymentCampaigns(this.repayments, this.referenceYearEnd);
-		this.repaymentCampaigns = [];
-		// this.repaymentCampaignsPayedOnTime = this._parseRepaymentCampaignsPayedOnTime(this.repaymentCampaigns);
-		this.repaymentCampaignsPayedOnTime = [];
+
+		this.repaymentCampaigns = this._parseRepaymentCampaigns(this.repayments, this.referenceYearEnd);
+		this.repaymentCampaignsPayedOnTime = this._parseRepaymentCampaignsPayedOnTime(this.repaymentCampaigns);
+		this.hasFreedomInvestments = this._hasFreedomInvestments();
 	}
 
 	updated(changedProps) {
 		if (changedProps.has('lastYear')) {
 			this.referenceYearStart = new Date(this.lastYear, 0).getTime() / 1000;
 			this.referenceYearEnd = new Date(this.lastYear, 12).getTime() / 1000;
-			// this.repaymentCampaigns = this._parseRepaymentCampaigns(this.repayments, this.referenceYearEnd);
 
-			// this.repaymentCampaignsPayedOnTime = this._parseRepaymentCampaignsPayedOnTime(this.repaymentCampaigns);
-			this.repaymentCampaignsPayedOnTime = [];
+			this.repaymentCampaigns = this._parseRepaymentCampaigns(this.repayments, this.referenceYearEnd);
+			this.repaymentCampaignsPayedOnTime = this._parseRepaymentCampaignsPayedOnTime(this.repaymentCampaigns);
 		}
+	}
+
+	_parseRepaymentCampaigns(repayments, referenceYearEnd) {
+		var repaymentCampaigns = [];
+
+		repayments.campaigns.forEach(function(campaign) {
+			var dateArray = campaign.creationDateTime.replace(/\D/g, ',').split(','); //for some reason Safari doesnt play nice with european date formats, but splitting the date format up like this will work
+
+			var creationDateTime = new Date(...dateArray).getTime() / 1000;
+
+			if (creationDateTime < referenceYearEnd) {
+				repaymentCampaigns.push(campaign.payments);
+
+				if (this._hasFreedomInvestments()) {
+					for (let index = 0; index < this.contracts.length; index++) {
+						const contract = this.contracts[index];
+
+						if (contract.campaignId == 1748 || contract.campaignId == 2080) {
+							const deadlineDateUnix = new Date(contract.deadlineDate).getTime() / 1000;
+
+							if (deadlineDateUnix < referenceYearEnd) {
+								const repayment = this.createFreedomRepayment(contract);
+								repaymentCampaigns.push(repayment);
+							}
+						}
+					}
+				}
+				return repaymentCampaigns;
+			}
+		}, this);
+
+		return repaymentCampaigns;
+	}
+
+	_parseRepaymentCampaignsPayedOnTime(repaymentCampaigns) {
+		let filteredCampaignIndexes = [];
+		for (var i = 0; i < repaymentCampaigns.length; i++) {
+			var campaignPaymentsOnTime = this._checkIfCampaignPaymentsAreMadeOnTime(repaymentCampaigns[i]); // check for late payments according to current date
+
+			if (!campaignPaymentsOnTime) {
+				filteredCampaignIndexes.push(i);
+			}
+		}
+
+		for (let y = 0; y < filteredCampaignIndexes.length; y++) {
+			repaymentCampaigns.splice(filteredCampaignIndexes[y] - y, 1);
+		}
+
+		return repaymentCampaigns;
+	}
+
+	_computeActualCurrentlyInvestedCapitalByYearsStart(repayments, referenceTime) {
+		// update repayments so it will show in totally invested
+		var referenceTimeStamp = new Date(`01-01-${referenceTime}`).getTime() / 1000;
+		var campaigns = [];
+
+		repayments.campaigns.forEach(function(campaign, index) {
+			var dateArray = campaign.creationDateTime.replace(/\D/g, ',').split(','); //for some reason Safari doesnt play nice with european date formats, but splitting the date format up like this will work
+
+			var creationDateTime = new Date(...dateArray).getTime() / 1000;
+
+			if (creationDateTime < referenceTimeStamp) {
+				campaigns.push(campaign.payments);
+			}
+		});
+
+		var actualInvestedCapital = 0;
+
+		campaigns.forEach(function(campaignPayments) {
+			actualInvestedCapital += campaignPayments[0].totalInvestmentAmount; //add principle
+
+			for (var i = 0; i < campaignPayments.length; i++) {
+				var payment = campaignPayments[i];
+
+				if (payment.datetime < referenceTimeStamp) {
+					actualInvestedCapital -= payment.shareAmount; //subtract from principle
+				}
+			}
+		});
+
+		if (this._hasFreedomInvestments()) {
+			actualInvestedCapital = this._updateActualInvestedCapitalFreedomYearStart(
+				actualInvestedCapital,
+				referenceTimeStamp,
+			);
+		}
+
+		return actualInvestedCapital;
 	}
 
 	_computeActualCurrentlyInvestedCapitalByYearsEnd(campaigns, referenceTime) {
@@ -69,37 +156,12 @@ export class CaasAnnualStatementGenerator extends LitElement {
 
 			for (var i = 0; i < campaignPayments.length; i++) {
 				var payment = campaignPayments[i];
-				if (payment.datetime < referenceTime) actualInvestedCapital -= payment.shareAmount; //subtract from principle
+				if (payment.datetime < referenceTime) {
+					actualInvestedCapital -= payment.shareAmount; //subtract from principle
+				}
 			}
 		});
 		return actualInvestedCapital;
-	}
-
-	_parseRepaymentCampaigns(repayments, referenceYearEnd) {
-		var repaymentCampaigns = [];
-		console.log('_parseRepaymentCampaigns', repayments);
-		repayments.campaigns.forEach(function(campaign) {
-			var dateArray = campaign.creationDateTime.replace(/\D/g, ',').split(','); //for some reason Safari doesnt play nice with european date formats, but splitting the date format up like this will work
-
-			var creationDateTime = new Date(...dateArray).getTime() / 1000;
-			if (creationDateTime < referenceYearEnd) return repaymentCampaigns.push(campaign.payments);
-		});
-		return repaymentCampaigns;
-	}
-
-	_parseRepaymentCampaignsPayedOnTime(repaymentCampaigns) {
-		let filteredCampaignIndexes = [];
-		console.log('_parseRepaymentCampaignsPayedOnTime', ...repaymentCampaigns);
-		for (var i = 0; i < repaymentCampaigns.length; i++) {
-			var campaignPaymentsOnTime = this._checkIfCampaignPaymentsAreMadeOnTime(repaymentCampaigns[i]); // check for late payments according to current date
-			if (!campaignPaymentsOnTime) filteredCampaignIndexes.push(i);
-		}
-
-		for (let y = 0; y < filteredCampaignIndexes.length; y++) {
-			repaymentCampaigns.splice(filteredCampaignIndexes[y] - y, 1);
-		}
-
-		return repaymentCampaigns;
 	}
 
 	_checkIfCampaignPaymentsAreMadeOnTime(campaignPayments) {
@@ -116,56 +178,16 @@ export class CaasAnnualStatementGenerator extends LitElement {
 		return onTime;
 	}
 
-	_computeActualCurrentlyInvestedCapitalByYearsStart(repayments, referenceTime) {
-		var referenceTimeStamp = new Date(`01-01-${referenceTime}`).getTime() / 1000;
-		var campaigns = [];
-		
-		console.log('repayments in: _computeActualCurrentlyInvestedCapitalByYearsStart ', repayments);
-
-		repayments.campaigns.forEach(function(campaign) {
-			var dateArray = campaign.creationDateTime.replace(/\D/g, ',').split(','); //for some reason Safari doesnt play nice with european date formats, but splitting the date format up like this will work
-
-			var creationDateTime = new Date(...dateArray).getTime() / 1000;
-			if (creationDateTime < referenceTimeStamp) {
-				campaigns.push(campaign.payments)
-			};
-		});
-
-		console.log('campaigns', campaigns);
-		var actualInvestedCapital = 0;
-		
-		campaigns.forEach(function(campaignPayments) {
-			actualInvestedCapital += campaignPayments[0].totalInvestmentAmount; //add principle
-			for (var i = 0; i < campaignPayments.length; i++) {
-				var payment = campaignPayments[i];
-				if (payment.datetime < referenceTimeStamp) {
-					actualInvestedCapital -= payment.shareAmount
-				}; //subtract from principle
-			}
-		});
-		console.log('contracts', this.transformDate(this.contracts[0].deadlineDate, '-'));
-		console.log('campaigns year start', campaigns );
-		// if (this._hasFreedomInvestments()) {
-		// 	actualInvestedCapital = this._updateActualInvestedCapitalFreedom(actualInvestedCapital);
-		// }
-		return actualInvestedCapital;
-	}
-
-	_hasFreedomInvestments() {
-		var hasFreedomContract = false
-		this.contracts.forEach(contract => {
-			if (contract.campaignId == 1748 || contract.campaignId == 2080) {
-				hasFreedomContract = true;
-			}
-		});
-		return hasFreedomContract;
-	}
-
-	_updateActualInvestedCapitalFreedom(actualInvestedCapital) {
+	_updateActualInvestedCapitalFreedomYearStart(actualInvestedCapital, referenceTimeStamp) {
 		for (let index = 0; index < this.contracts.length; index++) {
 			const contract = this.contracts[index];
+
+			const deadlineDateUnix = new Date(contract.deadlineDate).getTime() / 1000;
+
 			if (contract.campaignId == 1748 || contract.campaignId == 2080) {
-				actualInvestedCapital += contract.investment;
+				if (deadlineDateUnix < referenceTimeStamp) {
+					actualInvestedCapital += contract.investment;
+				}
 			}
 		}
 		return actualInvestedCapital;
@@ -175,7 +197,12 @@ export class CaasAnnualStatementGenerator extends LitElement {
 		var consolidatedPayments = [];
 		repaymentCampaigns.forEach(function(campaign) {
 			for (var i = 0; i < campaign.length; i++) {
-				if (campaign[i].datetime > referenceYearStart && campaign[i].datetime < referenceYearEnd) {
+				if (
+					campaign[i].datetime > referenceYearStart &&
+					campaign[i].datetime < referenceYearEnd &&
+					campaign[i].campaignId != 1748 &&
+					campaign[i].campaignId != 2080
+				) {
 					consolidatedPayments.push(campaign[i]);
 				}
 			}
