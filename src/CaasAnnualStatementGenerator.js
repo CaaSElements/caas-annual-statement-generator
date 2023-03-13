@@ -2,7 +2,6 @@ import { html, css, LitElement } from 'lit';
 import { jsPDF } from 'jspdf';
 
 export class CaasAnnualStatementGenerator extends LitElement {
-
 	static get styles() {
 		return css`
 			:host {
@@ -313,35 +312,35 @@ export class CaasAnnualStatementGenerator extends LitElement {
 			this.referenceYearEnd,
 		);
 
-		return contracts.map(
-			contract => html`
+		const templates = [];
+		for (let index = 0; index < contracts.length; index++) {
+			const contract = contracts[index];
+			const template = html`
 				<div
 					style="
-	                                    width: 100%;
-	                                    display: flex;
-	                                    border-bottom: 0.5px solid
-	                                        rgba(0, 0, 0, 0.16);
-	                                    line-height: 30px;
-										font-size: 10px;
+								width: 100%;
+								display: flex;
+								border-bottom: 0.5px solid
+									rgba(0, 0, 0, 0.16);
+								line-height: 30px;
+								font-size: 10px;
 
-	                                "
+							"
 				>
 					<div style="width: 50%">${contract.projectNaam}</div>
 
 					<div style="width: 25%; text-align: center">
-						<can-date
-							value="${contract.creationDateTime}|"
-							input-format="YYYY-MM-DD HH:mm:ss"
-							format="DD-MM-YYYY"
-						></can-date>
+						${this.transformDate(contract.creationDateTime, '-')}
 					</div>
 
 					<div style="width: 25%; text-align: center">
 						€ ${contract.investment}
 					</div>
 				</div>
-			`,
-		);
+			`;
+			templates.push(template);
+		}
+		return templates;
 	}
 
 	renderPresaleContracts() {
