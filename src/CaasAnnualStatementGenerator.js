@@ -224,47 +224,90 @@ export class CaasAnnualStatementGenerator extends LitElement {
 		return filteredContracts;
 	}
 
-	_getStockPaymentTemplate() {
+	createFreedomRepayment(contract) {
+		const deadlineDateDutchFormat = this.transformDate(contract.deadlineDate, '-');
+		// console.log('deadlineDateDutchFormat', deadlineDateDutchFormat);
+		const deadlineDateUnix = new Date(contract.deadlineDate).getTime() / 1000;
+		const arr = [];
 		const template = {
-			"date": "15-01-2022",
-			"datetime": 1642201200,
-			"repaymentDate": "15-01-2022",
-			"shareRate": 25.75,
-			"interestRate": 3.09,
-			"minumumPayment": "321.875,00",
-			"minumumInterest": "38.625,00",
-			"iteration": 0,
-			"paymentIndex": 1,
-			"indexNumber": 1,
-			"numberOfPayments": 4,
-			"invoiceId": "D0141101",
-			"campaignId": 1411,
-			"campaignProjectNaam": "Plan B is er!",
-			"completed": true,
-			"totalPayment": 28.84,
-			"remainingDebtPercentage": 77.25,
-			"currentPaymentsStatus": {
-				"paidPayments": 1,
-				"unpaidPayments": 3,
-				"currentDebtPercentage": 75,
-				"totalLoanPrinciple": 2500000
+			date: deadlineDateDutchFormat,
+			datetime: deadlineDateUnix, // transfer date to datetime
+			repaymentDate: deadlineDateDutchFormat,
+			shareRate: 0,
+			interestRate: 0,
+			minumumPayment: '0',
+			minumumInterest: '0',
+			iteration: 0,
+			paymentIndex: 1,
+			indexNumber: 1,
+			numberOfPayments: 0,
+			invoiceId: false,
+			campaignId: contract.campaignId,
+			campaignProjectNaam: contract.projectNaam,
+			completed: false,
+			totalPayment: 0,
+			remainingDebtPercentage: 0,
+			currentPaymentsStatus: {
+				paidPayments: 0,
+				unpaidPayments: 0,
+				currentDebtPercentage: 100,
+				totalLoanPrinciple: 0,
 			},
-			"totalAmountThisPayment": 721000,
-			"debtBeforeThisPayment": 2768125,
-			"totalDebt": 2768125,
-			"shareAmount": 257.5,
-			"interestAmount": 30.9,
-			"totalAmount": 288.4,
-			"totalInvestmentAmount": 1000
-		}
+			totalAmountThisPayment: 0,
+			debtBeforeThisPayment: 0,
+			totalDebt: 0,
+			shareAmount: 0,
+			interestAmount: 0,
+			totalAmount: 0,
+			totalInvestmentAmount: contract.investment,
+		};
+		arr.push(template);
+		return arr;
 	}
-	
-	
 
 	renderLoanContracts() {
 		const contracts = this._filterContractsByTypeIdsAndReferenceTimes(
 			this.contracts,
 			this.contractTypeIds.loan,
+			this.referenceYearStart,
+			this.referenceYearEnd,
+		);
+
+		return contracts.map(
+			contract => html`
+				<div
+					style="
+	                                    width: 100%;
+	                                    display: flex;
+	                                    border-bottom: 0.5px solid
+	                                        rgba(0, 0, 0, 0.16);
+	                                    line-height: 30px;
+										font-size: 10px;
+
+	                                "
+				>
+					<div style="width: 50%">${contract.projectNaam}</div>
+
+					<div style="width: 25%; text-align: center">
+						<can-date
+							value="${contract.creationDateTime}|"
+							input-format="YYYY-MM-DD HH:mm:ss"
+							format="DD-MM-YYYY"
+						></can-date>
+					</div>
+
+					<div style="width: 25%; text-align: center">
+						€ ${contract.investment}
+					</div>
+				</div>
+			`,
+		);
+	}
+
+	renderStockContracts() {
+		const contracts = this._filterContractsByTypeIdsAndReferenceTimes(
+			this.contracts,
+			this.contractTypeIds.stocks,
 			this.referenceYearStart,
 			this.referenceYearEnd,
 		);
@@ -368,7 +411,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
 
 	renderInterestRepayments() {
 		const payments = this._filterRepaymentsByYear(
-			this.repaymentCampaignsPayedOnTime,
+			this.repaymentCampaignsPayedOnTime, // dont show on interest payout list
 			this.referenceYearStart,
 			this.referenceYearEnd,
 		);
@@ -449,12 +492,21 @@ export class CaasAnnualStatementGenerator extends LitElement {
 	transformDate(date, separator) {
 		const p = date.split(/\D/g);
 		return [p[2], p[1], p[0]].join(separator);
-	};
+	}
+
+	_hasFreedomInvestments() {
+		var hasFreedomContract = false;
+		this.contracts.forEach(contract => {
+			if (contract.campaignId == 1748 || contract.campaignId == 2080) {
+				hasFreedomContract = true;
+			}
+		});
+		return hasFreedomContract;
+	}
 
 	render() {
 		const investor = this.investor;
 		const lastYear = this.lastYear;
-		const repayments = this.repayments;
 		if (this.referenceYearEnd && this.referenceYearEnd) {
 			return html`
 				<div
@@ -490,8 +542,7 @@ export class CaasAnnualStatementGenerator extends LitElement {
 							01-01-${lastYear}
 						</div>
 						<div style="width: 25%; text-align: center;  align-self:center">
-						<!-- update this with stock value -->
-							€ ${this.formatNumber(this._computeActualCurrentlyInvestedCapitalByYearsStart(repayments, lastYear))}
+							€ ${this.formatNumber(this._computeActualCurrentlyInvestedCapitalByYearsStart(this.repayments, lastYear))}
 						</div>
 					</div>
 
@@ -504,6 +555,21 @@ export class CaasAnnualStatementGenerator extends LitElement {
 							</div>
 						</div>
 						${this.renderLoanContracts()}
+
+						<!-- block for stock investments only for freedom -->
+						${this.hasFreedomInvestments
+							? html`
+									<div class="presale" style="font-size: 10px">
+										<div style="width: 100%">
+											<h4 style="font-size: 12px">
+												<i>Inleg aandelen</i>
+											</h4>
+										</div>
+									</div>
+									${this.renderStockContracts()}
+							  `
+							: ''}
+						<!-- block for stock investments only for freedom -->
 
 						<div class="presale" style="font-size: 10px">
 							<div style="width: 100%">
@@ -521,8 +587,8 @@ export class CaasAnnualStatementGenerator extends LitElement {
 								</h4>
 							</div>
 						</div>
-
 						${this.renderLoanRepayments()}
+
 						<br />
 						<div class="interestRepayments">
 							<div style="width: 100%">
@@ -530,7 +596,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
 									<i>Aflossingen rente</i>
 								</h4>
 							</div>
-
 							${this.renderInterestRepayments()}
 						</div>
 						<br />
@@ -553,7 +618,6 @@ export class CaasAnnualStatementGenerator extends LitElement {
 								</div>
 
 								<div style="width: 25%; text-align: center;  align-self:center">
-								<!-- update this with stock value -->
 									€
 									${this.formatNumber(
 										this._computeActualCurrentlyInvestedCapitalByYearsEnd(
